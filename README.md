@@ -14,8 +14,7 @@ contact: joshjaison2020@gmail.com or spiketones007 on discord
 *   **Auto-Detection**: Automatically retrieves song titles and album art from system media sources including Spotify, YouTube, and various web browsers.
 *   **Dynamic Animation**: Features a circular album art "platter" that rotates only during active music playback.
 *   **Capsule Controls**: High-contrast orange controls (#b84d26) for Play/Pause, Skip, and Previous track functions.
-*   **System Tray Integration**: Operates quietly in the background with a dedicated tray icon to toggle visibility or exit the application.
-*   **Privacy Focused**: Contains no hardcoded personal data or usernames; displays "READY" or "WAITING FOR MEDIA" by default.
+*   **System Tray Integration**: Operates quietly in the background with a dedicated tray icon to toggle visibility or exit the application. Displays "READY" or "WAITING FOR MEDIA" by default.
 
 ---
 

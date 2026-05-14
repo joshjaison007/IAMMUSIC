@@ -4,7 +4,7 @@ import asyncio
 import ctypes
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QSystemTrayIcon, QMenu, QGraphicsDropShadowEffect
 from PyQt6.QtCore import Qt, QTimer, QPoint, QPointF, QRectF, QSize, pyqtSignal, QObject
-from PyQt6.QtGui import QPixmap, QIcon, QAction, QPainter, QTransform, QPainterPath, QColor, QFont, QBrush, QPolygonF, QPen
+from PyQt6.QtGui import QPixmap, QIcon, QAction, QPainter, QTransform, QPainterPath, QColor, QFont, QFontMetrics, QBrush, QPolygonF, QPen
 
 from winrt.windows.media.control import GlobalSystemMediaTransportControlsSessionManager as SessionManager
 from winrt.windows.storage.streams import DataReader
@@ -18,6 +18,22 @@ def resource_path(relative_path):
 
 import threading
 import time
+
+VK_VOLUME_UP = 0xAF
+VK_VOLUME_DOWN = 0xAE
+KEYEVENTF_KEYUP = 0x0002
+
+_user32 = ctypes.windll.user32
+
+def _volume_key(vk):
+    _user32.keybd_event(vk, 0, 0, 0)
+    _user32.keybd_event(vk, 0, KEYEVENTF_KEYUP, 0)
+
+def volume_up(step=0):
+    _volume_key(VK_VOLUME_UP)
+
+def volume_down(step=0):
+    _volume_key(VK_VOLUME_DOWN)
 
 class MediaPoller(QObject):
     data_updated = pyqtSignal(dict)
@@ -190,6 +206,18 @@ class AlbumArt(QWidget):
         border_rect = rect.adjusted(1, 1, -1, -1)
         painter.drawEllipse(border_rect)
 
+    def wheelEvent(self, event):
+        center = self.rect().center()
+        pos = event.position()
+        dx = pos.x() - center.x()
+        dy = pos.y() - center.y()
+        radius = self.width() / 2
+        if dx * dx + dy * dy <= radius * radius:
+            if event.angleDelta().y() > 0:
+                volume_up()
+            else:
+                volume_down()
+
 
 class ControlButton(QWidget):
     clicked = pyqtSignal()
@@ -352,7 +380,7 @@ class MediaPlayerWidget(QMainWindow):
         layout.addWidget(self.album_art, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         self.title_label = QLabel("NO MEDIA DETECTED")
-        self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.title_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         self.title_label.setStyleSheet("""
             color: #c8c3bc;
             font-size: 10px;
@@ -433,10 +461,19 @@ class MediaPlayerWidget(QMainWindow):
             self._drag_pos = None
 
 if __name__ == "__main__":
+    # Single-instance lock via named mutex
+    mutex = ctypes.windll.kernel32.CreateMutexW(None, False, "IAMMUSIC_SingleInstance")
+    if ctypes.windll.kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
+        ctypes.windll.kernel32.CloseHandle(mutex)
+        sys.exit(0)
+
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(resource_path('icon.ico')))
     
     player = MediaPlayerWidget()
     player.show()
     
-    sys.exit(app.exec())
+    exit_code = app.exec()
+    ctypes.windll.kernel32.ReleaseMutex(mutex)
+    ctypes.windll.kernel32.CloseHandle(mutex)
+    sys.exit(exit_code)

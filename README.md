@@ -15,6 +15,7 @@ contact: joshjaison2020@gmail.com or spiketones007 on discord
 *   **Dynamic Animation**: Features a circular album art "platter" that rotates only during active music playback.
 *   **Capsule Controls**: High-contrast orange controls (#b84d26) for Play/Pause, Skip, and Previous track functions.
 *   **System Tray Integration**: Operates quietly in the background with a dedicated tray icon to toggle visibility or exit the application. Displays "READY" or "WAITING FOR MEDIA" by default.
+*   **Volume Control**: Scroll inside the media cover to adjust the volume.
 
 ---
 

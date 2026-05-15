@@ -1,4 +1,4 @@
-# Retro Media Widget
+# Media Widget
 
 A minimalist, media overlay designed to blend seamlessly into custom desktop environments, such as high-contrast or themed setups. This widget provides real-time "Now Playing" metadata accompanied by a smooth, rotating vinyl-style animation.
 

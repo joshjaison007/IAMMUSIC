@@ -1,0 +1,1245 @@
+// IAMMUSIC Modern HUD Media Player
+// Slint UI Definition with Smooth Animations, Ripple Feedback & Custom Colors
+
+component RippleCircle inherits Rectangle {
+    in-out property <color> ripple-color: #ffffff;
+    in-out property <bool> is-pressed: false;
+
+    width: 100%;
+    height: 100%;
+    clip: true;
+
+    circle := Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: root.width + 36px;
+        height: self.width;
+        border-radius: self.width / 2;
+        background: root.ripple-color;
+        opacity: 0.0;
+    }
+
+    states [
+        pressed when root.is-pressed : {
+            circle.width: root.width * 4 / 10;
+            circle.opacity: 0.45;
+            in {
+                animate circle.width { duration: 140ms; easing: ease-out; }
+                animate circle.opacity { duration: 90ms; }
+            }
+            out {
+                animate circle.width { duration: 380ms; easing: ease-out; }
+                animate circle.opacity { duration: 380ms; easing: ease-out; }
+            }
+        }
+    ]
+}
+
+component ColorPresetButton inherits Rectangle {
+    in-out property <color> dot-color;
+    in-out property <bool> is-selected: false;
+    callback clicked();
+
+    width: 20px;
+    height: 20px;
+
+    inner := Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: root.is-selected ? 19px : (touch.has-hover ? 18px : 15px);
+        height: self.width;
+        border-radius: self.width / 2;
+        background: root.dot-color;
+        border-width: root.is-selected ? 2px : (touch.has-hover ? 1.5px : 0px);
+        border-color: #ffffff;
+        clip: true;
+
+        animate width { duration: 150ms; easing: ease-out; }
+        animate border-width { duration: 150ms; easing: ease-out; }
+
+        RippleCircle {
+            ripple-color: #ffffff;
+            is-pressed: touch.pressed;
+        }
+    }
+
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
+component MiniButton inherits Rectangle {
+    in-out property <string> text;
+    in-out property <color> btn-color: #3e3934;
+    in-out property <color> active-color: #b84d26;
+    in-out property <bool> is-active: false;
+    callback clicked();
+
+    height: 18px;
+    border-radius: 4px;
+    background: root.is-active ? root.active-color : (touch.has-hover ? #4c4640 : root.btn-color);
+    clip: true;
+
+    animate background { duration: 140ms; easing: ease-out; }
+
+    RippleCircle {
+        ripple-color: #ffffff;
+        is-pressed: touch.pressed;
+    }
+
+    Text {
+        text: root.text;
+        font-size: 8px;
+        font-weight: 700;
+        color: #ffffff;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
+component QuickOptionButton inherits Rectangle {
+    in-out property <string> text;
+    in-out property <bool> is-active: false;
+    in-out property <color> active-color: #b84d26;
+    callback clicked();
+
+    width: 32px;
+    height: 16px;
+    border-radius: 4px;
+    background: root.is-active ? root.active-color : (touch.has-hover ? #3e3934 : #2c2825);
+    clip: true;
+
+    animate background { duration: 160ms; easing: ease-out; }
+
+    RippleCircle {
+        ripple-color: #ffffff;
+        is-pressed: touch.pressed;
+    }
+
+    Text {
+        text: root.text;
+        font-size: 7px;
+        font-weight: 700;
+        color: root.is-active ? #ffffff : (touch.has-hover ? #ffffff : #cccccc);
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        animate color { duration: 120ms; }
+    }
+
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
+component ToggleSwitch inherits Rectangle {
+    in-out property <bool> checked: false;
+    in-out property <color> active-color: #b84d26;
+    callback toggled();
+
+    width: 34px;
+    height: 16px;
+    border-radius: 8px;
+    background: root.checked ? root.active-color : (touch.has-hover ? #46403a : #322d28);
+    clip: true;
+
+    animate background { duration: 220ms; easing: ease-out; }
+
+    RippleCircle {
+        ripple-color: #ffffff;
+        is-pressed: touch.pressed;
+    }
+
+    knob := Rectangle {
+        x: root.checked ? (parent.width - self.width - 2px) : 2px;
+        y: 2px;
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+        background: #ffffff;
+        animate x { duration: 200ms; easing: ease-out; }
+    }
+
+    touch := TouchArea {
+        clicked => { root.toggled(); }
+    }
+}
+
+component HudSettingsContent inherits VerticalLayout {
+    in-out property <color> hud_accent_color;
+    in-out property <color> hud_bg_color;
+    in-out property <float> hud_opacity: 0.95;
+    in-out property <bool> is_always_on_top: true;
+    in-out property <bool> rotation_enabled: true;
+
+    in-out property <color> custom_color_1: #ff007f;
+    in-out property <color> custom_color_2: #7b2cbf;
+    in-out property <color> custom_color_3: #00b4d8;
+    in-out property <color> custom_color_4: #2ec4b6;
+
+    in-out property <string> bind_pad_play_pause: "Pad A";
+    in-out property <string> bind_pad_next: "Pad RB";
+    in-out property <string> bind_pad_prev: "Pad LB";
+    in-out property <string> bind_key_play_pause: "Space";
+    in-out property <string> bind_key_next: "Right";
+    in-out property <string> bind_key_prev: "Left";
+    in-out property <int> recording_slot: -1;
+    in-out property <bool> enable_gamepad: true;
+    in-out property <bool> enable_keyboard: true;
+
+    callback select_accent_preset(int);
+    callback select_bg_preset(int);
+    callback change_opacity(float);
+    callback toggle_rotation();
+    callback toggle_on_top();
+    callback toggle_gamepad();
+    callback toggle_keyboard();
+
+    callback pick_custom_accent();
+    callback pick_custom_bg();
+    callback apply_hex_color(string, bool);
+    callback select_custom_color(color, bool);
+    callback start_recording(int);
+
+    padding: 8px;
+    spacing: 5px;
+    alignment: start;
+
+    Text {
+        text: "HUD CUSTOMIZATION";
+        font-size: 9px;
+        font-weight: 800;
+        color: root.hud_accent_color;
+        horizontal-alignment: center;
+        animate color { duration: 150ms; }
+    }
+
+    // Accent Color Row
+    HorizontalLayout {
+        alignment: space-between;
+        Text { text: "Accent Color:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+        MiniButton {
+            text: "🎨 Pick";
+            width: 42px;
+            btn-color: #38332e;
+            clicked => { root.pick_custom_accent(); }
+        }
+    }
+    HorizontalLayout {
+        spacing: 5px;
+        alignment: start;
+
+        ColorPresetButton {
+            dot-color: #b84d26;
+            is-selected: root.hud_accent_color == #b84d26;
+            clicked => { root.select_accent_preset(0); }
+        }
+        ColorPresetButton {
+            dot-color: #ff6a3d;
+            is-selected: root.hud_accent_color == #ff6a3d;
+            clicked => { root.select_accent_preset(1); }
+        }
+        ColorPresetButton {
+            dot-color: #9d4edd;
+            is-selected: root.hud_accent_color == #9d4edd;
+            clicked => { root.select_accent_preset(2); }
+        }
+        ColorPresetButton {
+            dot-color: #00f5d4;
+            is-selected: root.hud_accent_color == #00f5d4;
+            clicked => { root.select_accent_preset(3); }
+        }
+        ColorPresetButton {
+            dot-color: #e63946;
+            is-selected: root.hud_accent_color == #e63946;
+            clicked => { root.select_accent_preset(4); }
+        }
+        ColorPresetButton {
+            dot-color: #fca311;
+            is-selected: root.hud_accent_color == #fca311;
+            clicked => { root.select_accent_preset(5); }
+        }
+    }
+
+    // Background Theme Row
+    HorizontalLayout {
+        alignment: space-between;
+        Text { text: "Background Theme:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+        MiniButton {
+            text: "🎨 Pick";
+            width: 42px;
+            btn-color: #38332e;
+            clicked => { root.pick_custom_bg(); }
+        }
+    }
+    HorizontalLayout {
+        spacing: 5px;
+        alignment: start;
+
+        ColorPresetButton {
+            dot-color: #1e1c19;
+            is-selected: root.hud_bg_color == #1e1c19;
+            clicked => { root.select_bg_preset(0); }
+        }
+        ColorPresetButton {
+            dot-color: #0a0a0a;
+            is-selected: root.hud_bg_color == #0a0a0a;
+            clicked => { root.select_bg_preset(1); }
+        }
+        ColorPresetButton {
+            dot-color: #2b2d42;
+            is-selected: root.hud_bg_color == #2b2d42;
+            clicked => { root.select_bg_preset(2); }
+        }
+        ColorPresetButton {
+            dot-color: #141b2d;
+            is-selected: root.hud_bg_color == #141b2d;
+            clicked => { root.select_bg_preset(3); }
+        }
+    }
+
+    // Custom Saved Colors Row
+    HorizontalLayout {
+        alignment: space-between;
+        Text { text: "Custom Palette:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+        HorizontalLayout {
+            spacing: 5px;
+            ColorPresetButton {
+                dot-color: root.custom_color_1;
+                is-selected: root.hud_accent_color == root.custom_color_1;
+                clicked => { root.select_custom_color(root.custom_color_1, true); }
+            }
+            ColorPresetButton {
+                dot-color: root.custom_color_2;
+                is-selected: root.hud_accent_color == root.custom_color_2;
+                clicked => { root.select_custom_color(root.custom_color_2, true); }
+            }
+            ColorPresetButton {
+                dot-color: root.custom_color_3;
+                is-selected: root.hud_accent_color == root.custom_color_3;
+                clicked => { root.select_custom_color(root.custom_color_3, true); }
+            }
+            ColorPresetButton {
+                dot-color: root.custom_color_4;
+                is-selected: root.hud_accent_color == root.custom_color_4;
+                clicked => { root.select_custom_color(root.custom_color_4, true); }
+            }
+        }
+    }
+
+    // Custom Hex Input Row
+    HorizontalLayout {
+        spacing: 4px;
+        alignment: space-between;
+
+        Rectangle {
+            width: 72px;
+            height: 20px;
+            border-radius: 4px;
+            background: #121110;
+            border-width: 1px;
+            border-color: hex_input.has-focus ? root.hud_accent_color : #44403c;
+            clip: true;
+
+            animate border-color { duration: 150ms; }
+
+            HorizontalLayout {
+                padding-left: 6px;
+                padding-right: 4px;
+
+                hex_input := TextInput {
+                    text: "#";
+                    font-size: 9px;
+                    font-weight: 600;
+                    color: #ffffff;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        MiniButton {
+            text: "+ Accent";
+            width: 50px;
+            btn-color: #2d2925;
+            clicked => { root.apply_hex_color(hex_input.text, true); }
+        }
+
+        MiniButton {
+            text: "+ BG";
+            width: 44px;
+            btn-color: #2d2925;
+            clicked => { root.apply_hex_color(hex_input.text, false); }
+        }
+    }
+
+    Rectangle { height: 1px; background: #332f2b; }
+
+    // Transparency Row
+    HorizontalLayout {
+        alignment: space-between;
+        Text { text: "Transparency:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+        HorizontalLayout {
+            spacing: 4px;
+            QuickOptionButton {
+                text: "100%";
+                is-active: root.hud_opacity >= 0.95;
+                active-color: root.hud_accent_color;
+                clicked => { root.change_opacity(1.0); }
+            }
+            QuickOptionButton {
+                text: "75%";
+                is-active: root.hud_opacity >= 0.70 && root.hud_opacity < 0.95;
+                active-color: root.hud_accent_color;
+                clicked => { root.change_opacity(0.75); }
+            }
+            QuickOptionButton {
+                text: "50%";
+                is-active: root.hud_opacity < 0.70;
+                active-color: root.hud_accent_color;
+                clicked => { root.change_opacity(0.50); }
+            }
+        }
+    }
+
+    // Vinyl Spin Toggle
+    HorizontalLayout {
+        alignment: space-between;
+        Text { text: "Vinyl Spin:"; font-size: 8px; color: #cccccc; vertical-alignment: center; }
+        ToggleSwitch {
+            checked: root.rotation_enabled;
+            active-color: root.hud_accent_color;
+            toggled => { root.toggle_rotation(); }
+        }
+    }
+
+    // Always On Top Toggle
+    HorizontalLayout {
+        alignment: space-between;
+        Text { text: "Always On Top:"; font-size: 8px; color: #cccccc; vertical-alignment: center; }
+        ToggleSwitch {
+            checked: root.is_always_on_top;
+            active-color: root.hud_accent_color;
+            toggled => { root.toggle_on_top(); }
+        }
+    }
+
+    Rectangle { height: 1px; background: #332f2b; }
+
+    // ==========================================
+    // SECTION 1: GAMEPAD CONTROLLER
+    // ==========================================
+    HorizontalLayout {
+        alignment: space-between;
+        Text {
+            text: "GAMEPAD CONTROLS";
+            font-size: 8px;
+            font-weight: 800;
+            color: root.enable_gamepad ? root.hud_accent_color : #777777;
+            vertical-alignment: center;
+            animate color { duration: 150ms; }
+        }
+        ToggleSwitch {
+            checked: root.enable_gamepad;
+            active-color: root.hud_accent_color;
+            toggled => { root.toggle_gamepad(); }
+        }
+    }
+
+    // ONLY SHOW GAMEPAD BINDS WHEN TOGGLE IS ON!
+    if (root.enable_gamepad) : VerticalLayout {
+        spacing: 5px;
+
+        HorizontalLayout {
+            alignment: space-between;
+            Text { text: "Play/Pause:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+            MiniButton {
+                text: root.recording_slot == 0 ? "PRESS PAD..." : root.bind_pad_play_pause;
+                width: 96px;
+                btn-color: root.recording_slot == 0 ? root.hud_accent_color : #282420;
+                is-active: root.recording_slot == 0;
+                clicked => { root.start_recording(0); }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: space-between;
+            Text { text: "Next Track:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+            MiniButton {
+                text: root.recording_slot == 1 ? "PRESS PAD..." : root.bind_pad_next;
+                width: 96px;
+                btn-color: root.recording_slot == 1 ? root.hud_accent_color : #282420;
+                is-active: root.recording_slot == 1;
+                clicked => { root.start_recording(1); }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: space-between;
+            Text { text: "Prev Track:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+            MiniButton {
+                text: root.recording_slot == 2 ? "PRESS PAD..." : root.bind_pad_prev;
+                width: 96px;
+                btn-color: root.recording_slot == 2 ? root.hud_accent_color : #282420;
+                is-active: root.recording_slot == 2;
+                clicked => { root.start_recording(2); }
+            }
+        }
+    }
+
+    // Clear divider between Gamepad and Keyboard sections
+    Rectangle { height: 1px; background: #332f2b; }
+
+    // ==========================================
+    // SECTION 2: KEYBOARD HOTKEYS
+    // ==========================================
+    HorizontalLayout {
+        alignment: space-between;
+        Text {
+            text: "KEYBOARD HOTKEYS";
+            font-size: 8px;
+            font-weight: 800;
+            color: root.enable_keyboard ? root.hud_accent_color : #777777;
+            vertical-alignment: center;
+            animate color { duration: 150ms; }
+        }
+        ToggleSwitch {
+            checked: root.enable_keyboard;
+            active-color: root.hud_accent_color;
+            toggled => { root.toggle_keyboard(); }
+        }
+    }
+
+    // ONLY SHOW KEYBOARD BINDS WHEN TOGGLE IS ON!
+    if (root.enable_keyboard) : VerticalLayout {
+        spacing: 5px;
+
+        HorizontalLayout {
+            alignment: space-between;
+            Text { text: "Play/Pause:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+            MiniButton {
+                text: root.recording_slot == 3 ? "PRESS KEY..." : root.bind_key_play_pause;
+                width: 96px;
+                btn-color: root.recording_slot == 3 ? root.hud_accent_color : #282420;
+                is-active: root.recording_slot == 3;
+                clicked => { root.start_recording(3); }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: space-between;
+            Text { text: "Next Track:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+            MiniButton {
+                text: root.recording_slot == 4 ? "PRESS KEY..." : root.bind_key_next;
+                width: 96px;
+                btn-color: root.recording_slot == 4 ? root.hud_accent_color : #282420;
+                is-active: root.recording_slot == 4;
+                clicked => { root.start_recording(4); }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: space-between;
+            Text { text: "Prev Track:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
+            MiniButton {
+                text: root.recording_slot == 5 ? "PRESS KEY..." : root.bind_key_prev;
+                width: 96px;
+                btn-color: root.recording_slot == 5 ? root.hud_accent_color : #282420;
+                is-active: root.recording_slot == 5;
+                clicked => { root.start_recording(5); }
+            }
+        }
+    }
+}
+
+export component AppWindow inherits Window {
+    title: "IAMMUSIC";
+    icon: @image-url("icon.png");
+    width: root.settings_open ? 350px : 140px;
+    height: 200px;
+    no-frame: true;
+    background: transparent;
+    always-on-top: root.is_always_on_top;
+
+    // Media properties
+    in-out property <string> track_title: "NO MEDIA DETECTED";
+    in-out property <string> track_artist: "";
+    in-out property <bool> is_playing: false;
+    in-out property <image> album_art;
+    in-out property <bool> has_album_art: false;
+    in-out property <float> rotation_angle: 0.0;
+    in-out property <bool> settings_open: false;
+    in-out property <bool> open_to_left: false;
+
+    // Customization properties
+    in-out property <color> hud_bg_color: #1e1c19;
+    in-out property <color> hud_accent_color: #b84d26;
+    in-out property <float> hud_opacity: 0.95;
+    in-out property <bool> is_always_on_top: true;
+    in-out property <bool> rotation_enabled: true;
+
+    // Custom saved colors
+    in-out property <color> custom_color_1: #ff007f;
+    in-out property <color> custom_color_2: #7b2cbf;
+    in-out property <color> custom_color_3: #00b4d8;
+    in-out property <color> custom_color_4: #2ec4b6;
+
+    // Volume HUD overlay
+    in-out property <bool> show_volume_hud: false;
+    in-out property <string> volume_hud_text: "VOL";
+
+    // Scrolling text offset
+    in-out property <length> scroll_offset: 0px;
+
+    // Keybinds & Controller mapping
+    in-out property <string> bind_pad_play_pause: "Pad A";
+    in-out property <string> bind_pad_next: "Pad RB";
+    in-out property <string> bind_pad_prev: "Pad LB";
+    in-out property <string> bind_key_play_pause: "Space";
+    in-out property <string> bind_key_next: "Right";
+    in-out property <string> bind_key_prev: "Left";
+    in-out property <int> recording_slot: -1;
+    in-out property <bool> enable_gamepad: true;
+    in-out property <bool> enable_keyboard: true;
+
+    callback play_pause_clicked();
+    callback prev_clicked();
+    callback next_clicked();
+    callback toggle_settings();
+    callback close_app();
+    callback volume_changed(float);
+    callback start_recording(int);
+    callback toggle_gamepad();
+    callback toggle_keyboard();
+
+    callback select_bg_preset(int);
+    callback select_accent_preset(int);
+    callback change_opacity(float);
+    callback toggle_on_top();
+    callback toggle_rotation();
+    callback window_drag_start();
+    callback window_drag_move();
+    callback window_drag_end();
+
+    callback pick_custom_accent();
+    callback pick_custom_bg();
+    callback apply_hex_color(string, bool);
+    callback select_custom_color(color, bool);
+
+    animate width { duration: 250ms; easing: ease-out; }
+
+    HorizontalLayout {
+        spacing: root.settings_open ? 8px : 0px;
+        animate spacing { duration: 250ms; easing: ease-out; }
+
+        // ==========================================
+        // DRAWER ON LEFT (Adaptive slide-in when near right edge)
+        // ==========================================
+        if (root.open_to_left) : Rectangle {
+            width: root.settings_open ? 202px : 0px;
+            height: 200px;
+            opacity: root.settings_open ? 1.0 : 0.0;
+            background: root.hud_bg_color.transparentize(1.0 - root.hud_opacity);
+            border-radius: 12px;
+            border-width: root.settings_open ? 1px : 0px;
+            border-color: #3d3731;
+            clip: true;
+
+            animate width { duration: 250ms; easing: ease-out; }
+            animate opacity { duration: 200ms; easing: ease-out; }
+            animate background { duration: 200ms; }
+
+            flick_left := Flickable {
+                width: 100%;
+                height: 100%;
+                content-height: (root.enable_gamepad && root.enable_keyboard) ? 460px : ((root.enable_gamepad || root.enable_keyboard) ? 390px : 320px);
+
+                HudSettingsContent {
+                    width: 194px;
+                    hud_accent_color: root.hud_accent_color;
+                    hud_bg_color: root.hud_bg_color;
+                    hud_opacity: root.hud_opacity;
+                    is_always_on_top: root.is_always_on_top;
+                    rotation_enabled: root.rotation_enabled;
+                    custom_color_1: root.custom_color_1;
+                    custom_color_2: root.custom_color_2;
+                    custom_color_3: root.custom_color_3;
+                    custom_color_4: root.custom_color_4;
+                    bind_pad_play_pause: root.bind_pad_play_pause;
+                    bind_pad_next: root.bind_pad_next;
+                    bind_pad_prev: root.bind_pad_prev;
+                    bind_key_play_pause: root.bind_key_play_pause;
+                    bind_key_next: root.bind_key_next;
+                    bind_key_prev: root.bind_key_prev;
+                    recording_slot: root.recording_slot;
+                    enable_gamepad: root.enable_gamepad;
+                    enable_keyboard: root.enable_keyboard;
+
+                    select_accent_preset(idx) => { root.select_accent_preset(idx); }
+                    select_bg_preset(idx) => { root.select_bg_preset(idx); }
+                    change_opacity(val) => { root.change_opacity(val); }
+                    toggle_rotation => { root.toggle_rotation(); }
+                    toggle_on_top => { root.toggle_on_top(); }
+                    toggle_gamepad => {
+                        if (flick_left.content-y < -120px) {
+                            flick_left.content-y = -120px;
+                        }
+                        root.toggle_gamepad();
+                    }
+                    toggle_keyboard => {
+                        if (flick_left.content-y < -120px) {
+                            flick_left.content-y = -120px;
+                        }
+                        root.toggle_keyboard();
+                    }
+
+                    pick_custom_accent => { root.pick_custom_accent(); }
+                    pick_custom_bg => { root.pick_custom_bg(); }
+                    apply_hex_color(hex, is_accent) => { root.apply_hex_color(hex, is_accent); }
+                    select_custom_color(c, is_accent) => { root.select_custom_color(c, is_accent); }
+                    start_recording(slot) => { root.start_recording(slot); }
+                }
+            }
+
+            // Sleek vertical scrollbar indicator
+            if (root.settings_open) : Rectangle {
+                x: parent.width - 5px;
+                y: 10px + (-flick_left.content-y / (((root.enable_gamepad && root.enable_keyboard) ? 460px : ((root.enable_gamepad || root.enable_keyboard) ? 390px : 320px)) - 200px)) * (200px - 20px - 36px);
+                width: 2.5px;
+                height: 36px;
+                border-radius: 1.25px;
+                background: root.hud_accent_color.transparentize(0.4);
+            }
+        }
+
+        // ==========================================
+        // MAIN PLAYER
+        // ==========================================
+        Rectangle {
+            width: 140px;
+            height: 200px;
+            background: root.hud_bg_color.transparentize(1.0 - root.hud_opacity);
+            border-radius: 12px;
+            border-width: 1px;
+            border-color: #332f2b;
+            clip: true;
+
+            animate background { duration: 200ms; }
+
+            // Background Drag Area (covers middle area)
+            TouchArea {
+                y: 28px;
+                height: 136px;
+                pointer-event(event) => {
+                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                        root.window_drag_start();
+                    } else if (event.kind == PointerEventKind.up) {
+                        root.window_drag_end();
+                    }
+                }
+                moved => {
+                    if (self.pressed) {
+                        root.window_drag_move();
+                    }
+                }
+            }
+
+            // Top Header Bar: Gear on Left, Close on Right
+            Rectangle {
+                x: 0px;
+                y: 0px;
+                width: parent.width;
+                height: 28px;
+                background: transparent;
+
+                // Settings Gear Button
+                Rectangle {
+                    x: 6px;
+                    y: 4px;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 12px;
+                    background: settings_touch.has-hover ? #ffffff.transparentize(0.9) : transparent;
+                    clip: true;
+
+                    animate background { duration: 150ms; }
+
+                    RippleCircle {
+                        ripple-color: root.hud_accent_color;
+                        is-pressed: settings_touch.pressed;
+                    }
+
+                    // Rotating gear container
+                    Rectangle {
+                        x: (parent.width - self.width) / 2;
+                        y: settings_touch.pressed ? ((parent.height - self.height) / 2 + 1px) : ((parent.height - self.height) / 2);
+                        width: 14px;
+                        height: 14px;
+                        transform-rotation: root.settings_open ? 90deg : 0deg;
+
+                        animate transform-rotation { duration: 250ms; easing: ease-out; }
+                        animate y { duration: 60ms; }
+
+                        Path {
+                            width: 13px;
+                            height: 13px;
+                            x: 0.5px;
+                            y: 0.5px;
+                            stroke: (settings_touch.has-hover || root.settings_open) ? #ffffff : root.hud_accent_color;
+                            stroke-width: 1.5px;
+                            fill: transparent;
+                            commands: "M 6.5 1 L 6.5 3 M 6.5 10 L 6.5 12 M 1 6.5 L 3 6.5 M 10 6.5 L 12 6.5 M 2.6 2.6 L 4.1 4.1 M 8.9 8.9 L 10.4 10.4 M 10.4 2.6 L 8.9 4.1 M 4.1 8.9 L 2.6 10.4 M 6.5 4.5 A 2 2 0 1 0 6.5 8.5 A 2 2 0 1 0 6.5 4.5";
+                            animate stroke { duration: 150ms; }
+                        }
+                    }
+
+                    settings_touch := TouchArea {
+                        clicked => { root.toggle_settings(); }
+                    }
+                }
+
+                // Close (✕) Button
+                Rectangle {
+                    x: parent.width - self.width - 6px;
+                    y: 4px;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 12px;
+                    background: close_touch.has-hover ? #e63946.transparentize(0.7) : transparent;
+                    clip: true;
+
+                    animate background { duration: 150ms; }
+
+                    RippleCircle {
+                        ripple-color: #e63946;
+                        is-pressed: close_touch.pressed;
+                    }
+
+                    // Rotating close icon container
+                    Rectangle {
+                        x: (parent.width - self.width) / 2;
+                        y: close_touch.pressed ? ((parent.height - self.height) / 2 + 1px) : ((parent.height - self.height) / 2);
+                        width: 12px;
+                        height: 12px;
+                        transform-rotation: close_touch.has-hover ? 90deg : 0deg;
+
+                        animate transform-rotation { duration: 200ms; easing: ease-out; }
+                        animate y { duration: 60ms; }
+
+                        Path {
+                            width: 10px;
+                            height: 10px;
+                            x: 1px;
+                            y: 1px;
+                            stroke: close_touch.has-hover ? #ffffff : #777777;
+                            stroke-width: 1.8px;
+                            commands: "M 1 1 L 9 9 M 9 1 L 1 9";
+                            animate stroke { duration: 150ms; }
+                        }
+                    }
+
+                    close_touch := TouchArea {
+                        clicked => { root.close_app(); }
+                    }
+                }
+            }
+
+            // Ambient subtle glow ring around the disc when playing
+            Rectangle {
+                y: (28px + 53px) - self.height / 2;
+                x: (parent.width - self.width) / 2;
+                width: root.is_playing ? 112px : 106px;
+                height: self.width;
+                border-radius: self.width / 2;
+                border-width: root.is_playing ? 2px : 0px;
+                border-color: root.hud_accent_color.transparentize(0.65);
+                background: transparent;
+
+                animate width { duration: 350ms; easing: ease-out; }
+                animate border-width { duration: 350ms; easing: ease-out; }
+                animate border-color { duration: 350ms; }
+            }
+
+            // Circular Album Art (106px circle with accent border ring & vinyl styling)
+            Rectangle {
+                y: 28px;
+                width: 106px;
+                height: 106px;
+                x: (parent.width - self.width) / 2;
+                border-radius: 53px;
+                clip: true;
+                border-width: 2.5px;
+                border-color: root.hud_accent_color;
+                background: #141312;
+
+                animate border-color { duration: 200ms; }
+
+                disc_rotator := Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    transform-rotation: root.rotation_angle * 1deg;
+
+                    if (root.has_album_art) : Image {
+                        width: parent.width;
+                        height: parent.height;
+                        source: root.album_art;
+                        image-fit: cover;
+                    }
+
+                    // Subtle Vinyl Center Spindle Ring
+                    if (root.has_album_art) : Rectangle {
+                        x: (parent.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        width: 18px;
+                        height: 18px;
+                        border-radius: 9px;
+                        background: #000000.transparentize(0.4);
+                        border-width: 1.5px;
+                        border-color: root.hud_accent_color.transparentize(0.4);
+
+                        animate border-color { duration: 200ms; }
+
+                        Rectangle {
+                            x: (parent.width - self.width) / 2;
+                            y: (parent.height - self.height) / 2;
+                            width: 4px;
+                            height: 4px;
+                            border-radius: 2px;
+                            background: #ffffff.transparentize(0.3);
+                        }
+                    }
+                }
+
+                if (!root.has_album_art) : Text {
+                    text: "♫";
+                    font-size: 26px;
+                    color: root.hud_accent_color.transparentize(0.5);
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                    animate color { duration: 200ms; }
+                }
+
+                // Volume HUD Feedback badge on album disc
+                if (root.show_volume_hud) : Rectangle {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    width: 60px;
+                    height: 24px;
+                    border-radius: 12px;
+                    background: #000000.transparentize(0.2);
+                    border-width: 1px;
+                    border-color: root.hud_accent_color;
+
+                    Text {
+                        text: root.volume_hud_text;
+                        font-size: 9px;
+                        font-weight: 800;
+                        color: #ffffff;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                TouchArea {
+                    scroll-event(event) => {
+                        if (event.delta-y > 0) {
+                            root.volume_changed(1.0);
+                        } else if (event.delta-y < 0) {
+                            root.volume_changed(-1.0);
+                        }
+                        return accept;
+                    }
+                }
+            }
+
+            // Song Title (Marquee Scroll) & Artist (Stationary)
+            VerticalLayout {
+                y: 135px;
+                width: 120px;
+                x: 10px;
+                spacing: 1px;
+                alignment: center;
+
+                Rectangle {
+                    height: 14px;
+                    clip: true;
+
+                    Text {
+                        x: -root.scroll_offset;
+                        text: root.track_title;
+                        font-size: 10px;
+                        font-weight: 800;
+                        color: #ffffff;
+                        vertical-alignment: center;
+                    }
+                }
+
+                if (root.track_artist != "") : Text {
+                    text: root.track_artist;
+                    font-size: 8px;
+                    color: #888888;
+                    horizontal-alignment: left;
+                    overflow: elide;
+                }
+            }
+
+            // Controls Bar: Circular Prev | Expanding Pill Play/Pause | Circular Next
+            Rectangle {
+                x: 0px;
+                y: 154px;
+                width: parent.width;
+                height: 32px;
+                background: transparent;
+
+                // Center Play/Pause Capsule Pill Button
+                center_pill := Rectangle {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    width: pp_touch.pressed ? 68px : 52px;
+                    height: 28px;
+                    border-radius: 14px;
+                    background: pp_touch.has-hover ? root.hud_accent_color.brighter(0.15) : root.hud_accent_color;
+                    clip: true;
+
+                    animate width { duration: 140ms; easing: ease-out; }
+                    animate x { duration: 140ms; easing: ease-out; }
+                    animate background { duration: 150ms; }
+
+                    RippleCircle {
+                        ripple-color: #ffffff;
+                        is-pressed: pp_touch.pressed;
+                    }
+
+                    // Play icon (▶)
+                    if (!root.is_playing) : Path {
+                        x: (parent.width - self.width) / 2 + 1px;
+                        y: pp_touch.pressed ? ((parent.height - self.height) / 2 + 1px) : ((parent.height - self.height) / 2);
+                        width: 12px;
+                        height: 14px;
+                        fill: #ffffff;
+                        commands: "M 0 0 L 12 7 L 0 14 Z";
+                        animate y { duration: 60ms; }
+                    }
+
+                    // Pause icon (⏸)
+                    if (root.is_playing) : HorizontalLayout {
+                        x: (parent.width - self.width) / 2;
+                        y: pp_touch.pressed ? ((parent.height - self.height) / 2 + 1px) : ((parent.height - self.height) / 2);
+                        width: 12px;
+                        height: 14px;
+                        spacing: 4px;
+                        alignment: center;
+                        animate y { duration: 60ms; }
+
+                        Rectangle {
+                            width: 3.5px;
+                            height: 14px;
+                            background: #ffffff;
+                            border-radius: 1px;
+                        }
+                        Rectangle {
+                            width: 3.5px;
+                            height: 14px;
+                            background: #ffffff;
+                            border-radius: 1px;
+                        }
+                    }
+
+                    pp_touch := TouchArea {
+                        clicked => { root.play_pause_clicked(); }
+                    }
+                }
+
+                // Prev Button (|◀) - Circular with dynamic outward nudge reaction
+                Rectangle {
+                    x: center_pill.x - self.width - (pp_touch.pressed ? 5px : 6px);
+                    y: (parent.height - self.height) / 2;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 14px;
+                    background: prev_touch.has-hover ? #ffffff.transparentize(0.82) : #ffffff.transparentize(0.92);
+                    clip: true;
+
+                    animate x { duration: 140ms; easing: ease-out; }
+                    animate background { duration: 150ms; }
+
+                    RippleCircle {
+                        ripple-color: root.hud_accent_color;
+                        is-pressed: prev_touch.pressed;
+                    }
+
+                    // Icon container
+                    Rectangle {
+                        x: (parent.width - self.width) / 2;
+                        y: prev_touch.pressed ? ((parent.height - self.height) / 2 + 1px) : ((parent.height - self.height) / 2);
+                        width: 13px;
+                        height: 12px;
+
+                        animate y { duration: 60ms; }
+
+                        // Bar on left
+                        Rectangle {
+                            x: 0px;
+                            y: 0px;
+                            width: 2.5px;
+                            height: 12px;
+                            background: prev_touch.has-hover ? #ffffff : root.hud_accent_color;
+                            border-radius: 0.5px;
+                            animate background { duration: 150ms; }
+                        }
+                        // Triangle pointing left
+                        Path {
+                            x: 3.5px;
+                            y: 0px;
+                            width: 9.5px;
+                            height: 12px;
+                            fill: prev_touch.has-hover ? #ffffff : root.hud_accent_color;
+                            commands: "M 9.5 0 L 0 6 L 9.5 12 Z";
+                            animate fill { duration: 150ms; }
+                        }
+                    }
+
+                    prev_touch := TouchArea {
+                        clicked => { root.prev_clicked(); }
+                    }
+                }
+
+                // Next Button (▶|) - Circular with dynamic outward nudge reaction
+                Rectangle {
+                    x: center_pill.x + center_pill.width + (pp_touch.pressed ? 5px : 6px);
+                    y: (parent.height - self.height) / 2;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 14px;
+                    background: next_touch.has-hover ? #ffffff.transparentize(0.82) : #ffffff.transparentize(0.92);
+                    clip: true;
+
+                    animate x { duration: 140ms; easing: ease-out; }
+                    animate background { duration: 150ms; }
+
+                    RippleCircle {
+                        ripple-color: root.hud_accent_color;
+                        is-pressed: next_touch.pressed;
+                    }
+
+                    // Icon container
+                    Rectangle {
+                        x: (parent.width - self.width) / 2;
+                        y: next_touch.pressed ? ((parent.height - self.height) / 2 + 1px) : ((parent.height - self.height) / 2);
+                        width: 13px;
+                        height: 12px;
+
+                        animate y { duration: 60ms; }
+
+                        // Triangle pointing right
+                        Path {
+                            x: 0px;
+                            y: 0px;
+                            width: 9.5px;
+                            height: 12px;
+                            fill: next_touch.has-hover ? #ffffff : root.hud_accent_color;
+                            commands: "M 0 0 L 9.5 6 L 0 12 Z";
+                            animate fill { duration: 150ms; }
+                        }
+                        // Bar on right
+                        Rectangle {
+                            x: 10.5px;
+                            y: 0px;
+                            width: 2.5px;
+                            height: 12px;
+                            background: next_touch.has-hover ? #ffffff : root.hud_accent_color;
+                            border-radius: 0.5px;
+                            animate background { duration: 150ms; }
+                        }
+                    }
+
+                    next_touch := TouchArea {
+                        clicked => { root.next_clicked(); }
+                    }
+                }
+            }
+        }
+
+        // ==========================================
+        // DRAWER ON RIGHT (Default adaptive slide-in)
+        // ==========================================
+        if (!root.open_to_left) : Rectangle {
+            width: root.settings_open ? 202px : 0px;
+            height: 200px;
+            opacity: root.settings_open ? 1.0 : 0.0;
+            background: root.hud_bg_color.transparentize(1.0 - root.hud_opacity);
+            border-radius: 12px;
+            border-width: root.settings_open ? 1px : 0px;
+            border-color: #3d3731;
+            clip: true;
+
+            animate width { duration: 250ms; easing: ease-out; }
+            animate opacity { duration: 200ms; easing: ease-out; }
+            animate background { duration: 200ms; }
+
+            flick_right := Flickable {
+                width: 100%;
+                height: 100%;
+                content-height: (root.enable_gamepad && root.enable_keyboard) ? 460px : ((root.enable_gamepad || root.enable_keyboard) ? 390px : 320px);
+
+                HudSettingsContent {
+                    width: 194px;
+                    hud_accent_color: root.hud_accent_color;
+                    hud_bg_color: root.hud_bg_color;
+                    hud_opacity: root.hud_opacity;
+                    is_always_on_top: root.is_always_on_top;
+                    rotation_enabled: root.rotation_enabled;
+                    custom_color_1: root.custom_color_1;
+                    custom_color_2: root.custom_color_2;
+                    custom_color_3: root.custom_color_3;
+                    custom_color_4: root.custom_color_4;
+                    bind_pad_play_pause: root.bind_pad_play_pause;
+                    bind_pad_next: root.bind_pad_next;
+                    bind_pad_prev: root.bind_pad_prev;
+                    bind_key_play_pause: root.bind_key_play_pause;
+                    bind_key_next: root.bind_key_next;
+                    bind_key_prev: root.bind_key_prev;
+                    recording_slot: root.recording_slot;
+                    enable_gamepad: root.enable_gamepad;
+                    enable_keyboard: root.enable_keyboard;
+
+                    select_accent_preset(idx) => { root.select_accent_preset(idx); }
+                    select_bg_preset(idx) => { root.select_bg_preset(idx); }
+                    change_opacity(val) => { root.change_opacity(val); }
+                    toggle_rotation => { root.toggle_rotation(); }
+                    toggle_on_top => { root.toggle_on_top(); }
+                    toggle_gamepad => {
+                        if (flick_right.content-y < -120px) {
+                            flick_right.content-y = -120px;
+                        }
+                        root.toggle_gamepad();
+                    }
+                    toggle_keyboard => {
+                        if (flick_right.content-y < -120px) {
+                            flick_right.content-y = -120px;
+                        }
+                        root.toggle_keyboard();
+                    }
+
+                    pick_custom_accent => { root.pick_custom_accent(); }
+                    pick_custom_bg => { root.pick_custom_bg(); }
+                    apply_hex_color(hex, is_accent) => { root.apply_hex_color(hex, is_accent); }
+                    select_custom_color(c, is_accent) => { root.select_custom_color(c, is_accent); }
+                    start_recording(slot) => { root.start_recording(slot); }
+                }
+            }
+
+            // Sleek vertical scrollbar indicator
+            if (root.settings_open) : Rectangle {
+                x: parent.width - 5px;
+                y: 10px + (-flick_right.content-y / (((root.enable_gamepad && root.enable_keyboard) ? 460px : ((root.enable_gamepad || root.enable_keyboard) ? 390px : 320px)) - 200px)) * (200px - 20px - 36px);
+                width: 2.5px;
+                height: 36px;
+                border-radius: 1.25px;
+                background: root.hud_accent_color.transparentize(0.4);
+            }
+        }
+    }
+}

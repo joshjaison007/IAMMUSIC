@@ -1,0 +1,62 @@
+name: Build & Release IAMMUSIC
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release Version (e.g. 1.0.1)'
+        required: true
+        default: '1.0.1'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Rust Executable & Installer
+        shell: pwsh
+        run: |
+          Push-Location rust_app
+          cargo build --release
+          Pop-Location
+          New-Item -ItemType Directory -Path "dist" -Force | Out-Null
+          Copy-Item -Path "rust_app\target\release\iammusic.exe" -Destination "dist\IAMMUSIC.exe" -Force
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
+
+      - name: Commit & Push updated update.json
+        shell: pwsh
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main || git checkout -b main
+          git add update.json
+          git commit -m "Auto-update version in update.json to v${{ steps.get_version.outputs.VERSION }} [skip ci]" || exit 0
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          name: IAMMUSIC v${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            Output/IAMMUSIC_Installer.exe
+            dist/IAMMUSIC.exe
+            update.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

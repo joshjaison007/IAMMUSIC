@@ -3,7 +3,7 @@
 # IAMMUSIC
 ### Ultra-Lightweight Modern Desktop HUD Media Player for Windows
 
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/joshjaison007/IAMMUSIC)
 [![Language](https://img.shields.io/badge/Language-Rust%202021-DEA584?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![UI Framework](https://img.shields.io/badge/UI-Slint%20(FemtoVG%20GPU)-2379F4?style=for-the-badge)](https://slint.dev)
 [![Memory](https://img.shields.io/badge/Memory-%3C%2010%20MB%20RAM-success?style=for-the-badge)](#-resource-consumption--performance)
@@ -126,7 +126,7 @@ This project originally started as an experimental Python prototype and was comp
 ### 1-Click PowerShell Build
 ```powershell
 # Clone the repository
-git clone https://github.com/yourusername/IAMMUSIC.git
+git clone https://github.com/joshjaison007/IAMMUSIC.git
 cd IAMMUSIC
 
 # Run the automated build script (compiles release binary & installer)
@@ -148,6 +148,7 @@ This project is actively maintained and continuously evolving. If you encounter 
 
 - **Email**: [joshjaison2020@gmail.com](mailto:joshjaison2020@gmail.com)
 - **Discord**: `spiketones007`
+- **GitHub Issues**: [Report a Bug or Request Feature](https://github.com/joshjaison007/IAMMUSIC/issues)
 
 ---
 

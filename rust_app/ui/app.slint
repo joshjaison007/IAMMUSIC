@@ -214,12 +214,16 @@ component HudSettingsContent inherits VerticalLayout {
         font-weight: 800;
         color: root.hud_accent_color;
         horizontal-alignment: center;
+        height: 14px;
+        vertical-stretch: 0;
         animate color { duration: 150ms; }
     }
 
     // Accent Color Row
     HorizontalLayout {
         alignment: space-between;
+        height: 18px;
+        vertical-stretch: 0;
         Text { text: "Accent Color:"; font-size: 8px; color: #aaaaaa; vertical-alignment: center; }
         MiniButton {
             text: "🎨 Pick";
@@ -231,6 +235,8 @@ component HudSettingsContent inherits VerticalLayout {
     HorizontalLayout {
         spacing: 5px;
         alignment: start;
+        height: 16px;
+        vertical-stretch: 0;
 
         ColorPresetButton {
             dot-color: #b84d26;
@@ -552,6 +558,11 @@ component HudSettingsContent inherits VerticalLayout {
             }
         }
     }
+
+    // Bottom spacer absorbs all excess vertical space so top widgets never stretch or separate
+    Rectangle {
+        vertical-stretch: 1;
+    }
 }
 
 export component AppWindow inherits Window {
@@ -683,15 +694,11 @@ export component AppWindow inherits Window {
                     toggle_rotation => { root.toggle_rotation(); }
                     toggle_on_top => { root.toggle_on_top(); }
                     toggle_gamepad => {
-                        if (flick_left.content-y < -120px) {
-                            flick_left.content-y = -120px;
-                        }
+                        flick_left.content-y = 0px;
                         root.toggle_gamepad();
                     }
                     toggle_keyboard => {
-                        if (flick_left.content-y < -120px) {
-                            flick_left.content-y = -120px;
-                        }
+                        flick_left.content-y = 0px;
                         root.toggle_keyboard();
                     }
 
@@ -1211,15 +1218,11 @@ export component AppWindow inherits Window {
                     toggle_rotation => { root.toggle_rotation(); }
                     toggle_on_top => { root.toggle_on_top(); }
                     toggle_gamepad => {
-                        if (flick_right.content-y < -120px) {
-                            flick_right.content-y = -120px;
-                        }
+                        flick_right.content-y = 0px;
                         root.toggle_gamepad();
                     }
                     toggle_keyboard => {
-                        if (flick_right.content-y < -120px) {
-                            flick_right.content-y = -120px;
-                        }
+                        flick_right.content-y = 0px;
                         root.toggle_keyboard();
                     }
 

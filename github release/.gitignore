@@ -1,0 +1,24 @@
+# Rust build artifacts
+target/
+**/target/
+*.pdb
+*.obj
+
+# IDE and Editor configurations
+.vscode/
+.idea/
+*.swp
+*~
+
+# Operating System files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log
+
+# Explicitly keep release distribution binaries
+!IAMMUSIC.exe
+!IAMMUSIC_Installer.exe

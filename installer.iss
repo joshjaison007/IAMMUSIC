@@ -1,6 +1,7 @@
 [Setup]
+AppId={{C78F5961-46B9-4DF5-B330-8D63CE760F03}}
 AppName=IAMMUSIC
-AppVersion=1.1.0
+AppVersion=1.0.0
 AppPublisher=IAMMUSIC
 DefaultDirName={autopf}\IAMMUSIC
 DefaultGroupName=IAMMUSIC

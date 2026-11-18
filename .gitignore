@@ -1,24 +1,43 @@
 # Rust build artifacts
 target/
 **/target/
+rust_app/target/
 *.pdb
 *.obj
 
-# IDE and Editor configurations
-.vscode/
-.idea/
-*.swp
-*~
+# Intermediate build outputs
+build/
+dist/
+Output/
+Releases/
+__pycache__/
+*.pyc
 
-# Operating System files
-Thumbs.db
-Desktop.ini
-.DS_Store
+# Legacy Python build artifacts
+*.spec
+IAMMUSIC.zip
+LATEST RELEASE/
+IAMMUSIC/
+main.py
+main copy.py
+test_gui.py
+README.txt
+update.json
 
-# Temporary files
+# Logs, test and temp scripts
 *.tmp
 *.log
+test_mem.ps1
+output.txt
 
-# Explicitly keep release distribution binaries
-!IAMMUSIC.exe
-!IAMMUSIC_Installer.exe
+# IDE & Editor files
+.vscode/
+.idea/
+
+# Windows system files
+Thumbs.db
+Desktop.ini
+
+# Explicitly track and preserve GitHub Release package
+!"github release"/
+!"github release"/**

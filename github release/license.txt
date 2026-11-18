@@ -1,0 +1,23 @@
+IAMMUSIC END USER LICENSE AGREEMENT (EULA) & TERMS OF USE
+
+Last Updated: November 2026
+
+Please read this End User License Agreement ("Agreement") carefully before installing or using IAMMUSIC ("Software").
+
+1. LICENSE GRANT
+IAMMUSIC grants you a personal, non-exclusive, non-transferable, royalty-free license to download, install, and use this Software on your personal computers solely for your personal or non-commercial playback control purposes.
+
+2. SYSTEM PERMISSIONS & MEDIA ACCESS
+IAMMUSIC utilizes Windows System Media Transport Controls (WinRT) to detect active audio sessions (such as Spotify, YouTube, Chrome, Media Player) and display media controls. No audio streams, personal credentials, or browsing history are recorded, stored, or transmitted to any third-party servers.
+
+3. AUTOMATIC UPDATES
+IAMMUSIC may periodically check for new software updates. When an update is available, you will be prompted to download and install the latest version.
+
+4. DISCLAIMER OF WARRANTIES
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
+
+5. UNINSTALLATION & RESIDUE
+You may uninstall the Software at any time via Windows Settings > Installed Apps or Control Panel > Programs and Features. The uninstaller is designed to cleanly remove the application and its associated configuration without leaving residue files.
+
+By clicking "I accept the agreement" and continuing with installation, you agree to be bound by these terms.
+
